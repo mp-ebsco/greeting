@@ -34,30 +34,37 @@ public class GreetingController {
     // Get all greetings
     @RequestMapping(method = RequestMethod.GET)
     public List<HttpEntity<Greeting>> getGreetings() {
-        return IntStream.range(1, 5)
-        .mapToObj(id -> new HttpEntity<Greeting>(createGreeting(id)))
-        .collect(Collectors.toList());
+        return IntStream.range(1, 5).mapToObj(id -> new HttpEntity<Greeting>(createGreeting(id)))
+                .collect(Collectors.toList());
     }
-    
-    // Hard-coded Greetings:
+
+    // Hard-coded DAO for Greetings
+
+    private Greeting createGreeting(Integer id) {
+
+        Greeting greeting = new Greeting(greetingsById.get(id));
+
+        // Add link to parent /greeting
+        greeting.add(linkTo(methodOn(GreetingController.class).getGreetings()).withRel("greeting"));
+
+        // Link to self
+        greeting.add(linkTo(methodOn(GreetingController.class).getGreetingById(id)).withSelfRel());
+
+        // Add detail links
+        IntStream.range(1, 3).forEach(detailId -> greeting.add(
+                linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, detailId)).withRel("detail")));
+
+        return greeting;
+    }
+
     private Map<Integer, String> greetingsById = new HashMap<>();
 
-    @PostConstruct void createGreetings() {
+    @PostConstruct
+    void createGreetings() {
         greetingsById.put(1, "Greetings earthlings, we shall now take over your planet");
         greetingsById.put(2, "Hello world");
         greetingsById.put(3, "Welcome Artful Dodgers!");
         greetingsById.put(4, "Hi!");
         greetingsById.put(5, "Yo!");
-    }
-
-    // DAO
-    private Greeting createGreeting(Integer id) {
-        Greeting greeting = new Greeting(greetingsById.get(id));
-        greeting.add(linkTo(methodOn(GreetingController.class).getGreetings()).withRel("greeting"));
-        greeting.add(linkTo(methodOn(GreetingController.class).getGreetingById(id)).withSelfRel());
-        greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, 1)).withRel("detail"));
-        greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, 2)).withRel("detail"));
-        greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, 3)).withRel("detail"));
-        return greeting;
     }
 }
