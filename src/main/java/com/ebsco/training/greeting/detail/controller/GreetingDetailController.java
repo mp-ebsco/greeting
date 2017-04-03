@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ebsco.training.greeting.controller.GreetingController;
-import com.ebsco.training.greeting.detail.value.GreetingDetail;
-import com.ebsco.training.greeting.value.Greeting;
+import com.ebsco.training.greeting.detail.domain.GreetingDetail;
+import com.ebsco.training.greeting.domain.Greeting;
 
 @RestController
 @RequestMapping("/greeting/{id}/detail")
@@ -37,7 +37,7 @@ public class GreetingDetailController {
     }
     
     private GreetingDetail createGreetingDetail(Integer id, Integer detailId) {
-        GreetingDetail greetingDetail = new GreetingDetail("Greeting Detail: " + detailId);
+        GreetingDetail greetingDetail = new GreetingDetail(detailId, "Greeting Detail: " + detailId);
         greetingDetail
                 .add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, detailId)).withSelfRel());
         greetingDetail.add(linkTo(methodOn(GreetingController.class).getGreetingById(id)).withRel("greeting"));
