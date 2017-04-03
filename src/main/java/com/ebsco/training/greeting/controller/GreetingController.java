@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,12 +24,14 @@ import com.ebsco.training.greeting.value.Greeting;
 @RequestMapping("/greeting")
 public class GreetingController {
 
+    // Get greeting by id
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public HttpEntity<Greeting> getGreetingById(@PathVariable("id") Integer id) {
         Greeting greeting = createGreeting(id);
         return new HttpEntity<Greeting>(greeting);
     }
 
+    // Get all greetings
     @RequestMapping(method = RequestMethod.GET)
     public List<HttpEntity<Greeting>> getGreetings() {
         return IntStream.range(1, 5)
@@ -35,6 +39,18 @@ public class GreetingController {
         .collect(Collectors.toList());
     }
     
+    // Hard-coded Greetings:
+    private Map<Integer, String> greetingsById = new HashMap<>();
+
+    @PostConstruct void createGreetings() {
+        greetingsById.put(1, "Greetings earthlings, we shall now take over your planet");
+        greetingsById.put(2, "Hello world");
+        greetingsById.put(3, "Welcome Artful Dodgers!");
+        greetingsById.put(4, "Hi!");
+        greetingsById.put(5, "Yo!");
+    }
+
+    // DAO
     private Greeting createGreeting(Integer id) {
         Greeting greeting = new Greeting(greetingsById.get(id));
         greeting.add(linkTo(methodOn(GreetingController.class).getGreetings()).withRel("greeting"));
@@ -44,24 +60,4 @@ public class GreetingController {
         greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, 3)).withRel("detail"));
         return greeting;
     }
-
-//    private Greeting createGreeting(Integer id) {
-//        Greeting greeting = new Greeting(greetingsById.get(id));
-//        greeting.add(linkTo(methodOn(GreetingController.class).getGreetingById(id)).withSelfRel());
-//        greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, 1)).withRel("detail"));
-//        greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, 2)).withRel("detail"));
-//        greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, 3)).withRel("detail"));
-//        return new HttpEntity<Greeting>(greeting);
-//    }
-
-    private static Map<Integer, String> greetingsById = new HashMap<>();
-
-    static {
-        greetingsById.put(1, "Greetings earthlings, we shall now take over your planet");
-        greetingsById.put(2, "Hello world");
-        greetingsById.put(3, "Welcome Artful Dodgers!");
-        greetingsById.put(4, "Hi!");
-        greetingsById.put(5, "Yo!");
-    }
-
 }
