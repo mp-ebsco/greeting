@@ -8,7 +8,7 @@ Contains a simple spring-boot spring-web API for Greetings which contain Detail 
 
 ## Run
 
-`$ git bootRun`
+`$ gradle bootRun`
 
 ## See
 
