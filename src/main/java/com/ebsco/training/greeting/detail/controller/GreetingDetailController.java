@@ -13,14 +13,16 @@ import com.ebsco.training.greeting.controller.GreetingController;
 import com.ebsco.training.greeting.detail.value.GreetingDetail;
 
 @RestController
-@RequestMapping("/greeting/{id}/detail")
+@RequestMapping("/greeting/{id}/detail/{detailId}")
 public class GreetingDetailController {
 
     @RequestMapping(method = RequestMethod.GET)
-    public HttpEntity<GreetingDetail> getGreetingDetail(@PathVariable("id") Integer id) {
-        GreetingDetail greeting = new GreetingDetail("Awesome details about our greeting");
-        greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id)).withSelfRel());
-        greeting.add(linkTo(methodOn(GreetingController.class).getGreetingById(id)).withRel("greeting"));
-        return new HttpEntity<GreetingDetail>(greeting);
+    public HttpEntity<GreetingDetail> getGreetingDetail(@PathVariable("id") Integer id,
+            @PathVariable("detailId") Integer detailId) {
+        GreetingDetail greetingDetail = new GreetingDetail("Greeting Detail: " + detailId);
+        greetingDetail
+                .add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, detailId)).withSelfRel());
+        greetingDetail.add(linkTo(methodOn(GreetingController.class).getGreetingById(id)).withRel("greeting"));
+        return new HttpEntity<GreetingDetail>(greetingDetail);
     }
 }
