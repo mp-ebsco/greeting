@@ -51,8 +51,7 @@ public class GreetingController {
         greeting.add(linkTo(methodOn(GreetingController.class).getGreetingById(id)).withSelfRel());
 
         // Add detail links
-        IntStream.range(1, 3).forEach(detailId -> greeting.add(
-                linkTo(methodOn(GreetingDetailController.class).getGreetingDetail(id, detailId)).withRel("detail")));
+        greeting.add(linkTo(methodOn(GreetingDetailController.class).getGreetingDetails(id)).withRel("detail"));
 
         return greeting;
     }
